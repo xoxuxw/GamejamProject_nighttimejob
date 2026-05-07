@@ -1,4 +1,3 @@
-using UnityEditor.Overlays;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -6,77 +5,83 @@ public class PlayerController : MonoBehaviour
 {
     private PlayerInputActions inputActions;
     private Rigidbody player_rigidbody;
-
     private Vector2 moveInput;
+    private Vector2 mouseLook; // 마우스 움직임 값을 담을 변수
 
-    // 여기부터
+    [Header("카메라 설정")]
+    public Transform cameraTransform; // 인스펙터에서 Main Camera를 꼭 연결하세요!
+    public float mouseSensitivity = 0.15f;
+    private float xRotation = 0f;
+
+    [Header("이동 및 점프")]
+    public float moveSpeed = 5f;
     public float jumpForce = 5f;
 
-    [Header("바닥 감지 (레이캐스트)")]
-    public float rayLength = 1.1f; // 캐릭터 중심에서 바닥까지의 거리 + 약간의 여유분
-    public LayerMask groundLayer;  // 바닥으로 인식할 레이어
-    private bool isGrounded;       // 현재 바닥에 닿아있는가?
+    [Header("바닥 감지")]
+    public float rayLength = 1.1f;
+    public LayerMask groundLayer;
+    private bool isGrounded;
 
     void Awake()
     {
         player_rigidbody = GetComponent<Rigidbody>();
         inputActions = new PlayerInputActions();
 
-        inputActions.Player.Move.performed += OnMove;
+        // 이동과 점프만 인풋 액션 사용
+        inputActions.Player.Move.performed += ctx => moveInput = ctx.ReadValue<Vector2>();
+        inputActions.Player.Move.canceled += ctx => moveInput = Vector2.zero;
         inputActions.Player.Jump.performed += OnJump;
 
-        // 키에서 손을 뗐을 때(canceled) OnMoveCanceled 함수 실행
-        inputActions.Player.Move.canceled += OnMoveCanceled;
-
-
+        // 마우스 커서 숨기기 및 중앙 고정
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 
-    // 4. 스크립트가 켜질 때 인풋 시스템 활성화
-    void OnEnable()
-    {
-        inputActions.Enable();
-    }
-
-    // 5. 스크립트가 꺼질 때 인풋 시스템 비활성화
-    void OnDisable()
-    {
-        inputActions.Disable();
-    }
-
-    // 6. 이벤트 발생 시 실행될 함수들
-    private void OnMove(InputAction.CallbackContext context)
-    {
-        // Vector2 형태로 들어온 입력값(WASD 방향)을 읽어서 변수에 저장
-        moveInput = context.ReadValue<Vector2>();
-    }
-
-    private void OnMoveCanceled(InputAction.CallbackContext context)
-    {
-        // 손을 떼면 이동 값을 0으로 초기화
-        moveInput = Vector2.zero;
-    }
-
-
+    void OnEnable() => inputActions.Enable();
+    void OnDisable() => inputActions.Disable();
 
     void Update()
     {
-        Vector3 origin = transform.position; // 시작점: 캐릭터의 중심
-        Vector3 direction = Vector3.down;    // 방향: 아래쪽
-
-        Debug.DrawRay(origin, direction * rayLength, Color.red);
-
-        if (Physics.Raycast(origin, direction, rayLength, groundLayer))
+        // [수정 핵심] 인풋 액션 설정 대신 마우스 델타값을 직접 읽어옵니다.
+        if (Mouse.current != null)
         {
-            isGrounded = true;
-        }
-        else
-        {
-            isGrounded = false;
+            mouseLook = Mouse.current.delta.ReadValue();
         }
 
-        Vector3 moveDirection = new Vector3(moveInput.x, 0f, moveInput.y);
-        transform.Translate(moveDirection * 5f * Time.deltaTime);
+        HandleGroundCheck();
+        HandleRotation();
+        HandleMovement();
     }
+
+    void HandleRotation()
+    {
+        float mouseX = mouseLook.x * mouseSensitivity;
+        float mouseY = mouseLook.y * mouseSensitivity;
+
+        // 1. 좌우 회전 (플레이어 몸통 회전)
+        transform.Rotate(Vector3.up * mouseX);
+
+        // 2. 상하 회전 (카메라만 회전)
+        if (cameraTransform != null)
+        {
+            xRotation -= mouseY;
+            xRotation = Mathf.Clamp(xRotation, -85f, 85f); // 고개가 너무 꺾이지 않게 제한
+            cameraTransform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
+        }
+    }
+
+    void HandleMovement()
+    {
+        // 플레이어가 바라보는 방향을 기준으로 이동
+        Vector3 moveDirection = transform.forward * moveInput.y + transform.right * moveInput.x;
+        transform.position += moveDirection * moveSpeed * Time.deltaTime;
+    }
+
+    void HandleGroundCheck()
+    {
+        isGrounded = Physics.Raycast(transform.position, Vector3.down, rayLength, groundLayer);
+    }
+
     private void OnJump(InputAction.CallbackContext context)
     {
         if (isGrounded)
