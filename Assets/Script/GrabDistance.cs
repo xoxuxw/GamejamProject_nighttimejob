@@ -15,6 +15,16 @@ public class GrabLitch : MonoBehaviour
             canGrab = true;
             targetObject = other.gameObject; // 닿은 오브젝트 저장
             Debug.Log($"대상 발견: {targetObject.name}");
+        }else if (other.gameObject.layer == LayerMask.NameToLayer("Broomstick"))
+        {
+            canGrab = true;
+            targetObject = other.gameObject; // 닿은 오브젝트 저장
+            Debug.Log($"대상 발견: {targetObject.name}");
+        }else if (other.gameObject.layer == LayerMask.NameToLayer("Scanner"))
+        {
+            canGrab = true;
+            targetObject = other.gameObject; // 닿은 오브젝트 저장
+            Debug.Log($"대상 발견: {targetObject.name}");
         }
     }
 
