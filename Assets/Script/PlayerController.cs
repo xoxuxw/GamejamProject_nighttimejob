@@ -6,10 +6,10 @@ public class PlayerController : MonoBehaviour
     private PlayerInputActions inputActions;
     private Rigidbody player_rigidbody;
     private Vector2 moveInput;
-    private Vector2 mouseLook; // 마우스 움직임 값을 담을 변수
+    private Vector2 mouseLook;
 
     [Header("카메라 설정")]
-    public Transform cameraTransform; // 인스펙터에서 Main Camera를 꼭 연결하세요!
+    public Transform cameraTransform; // 인스펙터에서 Main Camera 연결
     public float mouseSensitivity = 0.15f;
     private float xRotation = 0f;
 
@@ -27,12 +27,11 @@ public class PlayerController : MonoBehaviour
         player_rigidbody = GetComponent<Rigidbody>();
         inputActions = new PlayerInputActions();
 
-        // 이동과 점프만 인풋 액션 사용
         inputActions.Player.Move.performed += ctx => moveInput = ctx.ReadValue<Vector2>();
         inputActions.Player.Move.canceled += ctx => moveInput = Vector2.zero;
         inputActions.Player.Jump.performed += OnJump;
 
-        // 마우스 커서 숨기기 및 중앙 고정
+        // 마우스 커서 고정
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
@@ -42,7 +41,7 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        // [수정 핵심] 인풋 액션 설정 대신 마우스 델타값을 직접 읽어옵니다.
+        // 마우스 델타값 직접 읽기 (Input Action 에러 방지)
         if (Mouse.current != null)
         {
             mouseLook = Mouse.current.delta.ReadValue();
@@ -58,21 +57,18 @@ public class PlayerController : MonoBehaviour
         float mouseX = mouseLook.x * mouseSensitivity;
         float mouseY = mouseLook.y * mouseSensitivity;
 
-        // 1. 좌우 회전 (플레이어 몸통 회전)
         transform.Rotate(Vector3.up * mouseX);
 
-        // 2. 상하 회전 (카메라만 회전)
         if (cameraTransform != null)
         {
             xRotation -= mouseY;
-            xRotation = Mathf.Clamp(xRotation, -85f, 85f); // 고개가 너무 꺾이지 않게 제한
+            xRotation = Mathf.Clamp(xRotation, -85f, 85f);
             cameraTransform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
         }
     }
 
     void HandleMovement()
     {
-        // 플레이어가 바라보는 방향을 기준으로 이동
         Vector3 moveDirection = transform.forward * moveInput.y + transform.right * moveInput.x;
         transform.position += moveDirection * moveSpeed * Time.deltaTime;
     }
