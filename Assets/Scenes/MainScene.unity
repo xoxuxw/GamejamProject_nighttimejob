@@ -2835,6 +2835,7 @@ MonoBehaviour:
   closedHeight: 220
   openHeight: 800
   speed: 5
+  contentDelay: 0.06
 --- !u!114 &1341874937
 MonoBehaviour:
   m_ObjectHideFlags: 0

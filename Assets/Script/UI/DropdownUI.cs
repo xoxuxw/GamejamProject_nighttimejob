@@ -15,27 +15,33 @@ public class DropdownUI : MonoBehaviour
     [Header("속도")]
     public float speed = 8f;
 
+    [Header("내용 표시 딜레이")]
+    public float contentDelay = 0.2f;
+
     private bool isOpen = false;
+
     private Coroutine anim;
 
     void Start()
     {
         // 시작 상태
         panel.sizeDelta =
-            new Vector2(panel.sizeDelta.x, closedHeight);
+            new Vector2(
+                panel.sizeDelta.x,
+                closedHeight
+            );
 
+        // 내용 숨김
         content.gameObject.SetActive(false);
 
         // 화살표 아래 방향
-        arrow.localRotation = Quaternion.Euler(0, 0, 0);
+        arrow.localRotation =
+            Quaternion.Euler(0, 0, 0);
     }
 
     public void Toggle()
     {
         isOpen = !isOpen;
-
-        // 내용 표시
-        content.gameObject.SetActive(isOpen);
 
         // 기존 애니메이션 중지
         if (anim != null)
@@ -45,29 +51,48 @@ public class DropdownUI : MonoBehaviour
         float targetHeight =
             isOpen ? openHeight : closedHeight;
 
-        // 애니메이션 시작
+        // 패널 애니메이션 시작
         anim = StartCoroutine(
             AnimateHeight(targetHeight)
         );
 
-        // 화살표 회전
+        // 펼칠 때
         if (isOpen)
         {
-            // ▲
+            // 내용 딜레이 표시
+            StartCoroutine(ShowContentDelay());
+
+            // 화살표 반전
             arrow.localRotation =
                 Quaternion.Euler(0, 0, 180f);
         }
+        // 닫을 때
         else
         {
-            // ▼
+            // 내용 숨김
+            content.gameObject.SetActive(false);
+
+            // 화살표 원래 방향
             arrow.localRotation =
                 Quaternion.Euler(0, 0, 0);
         }
     }
 
+    IEnumerator ShowContentDelay()
+    {
+        yield return new WaitForSeconds(
+            contentDelay
+        );
+
+        content.gameObject.SetActive(true);
+    }
+
     IEnumerator AnimateHeight(float target)
     {
-        while (Mathf.Abs(panel.sizeDelta.y - target) > 1f)
+        while (
+            Mathf.Abs(panel.sizeDelta.y - target)
+            > 1f
+        )
         {
             float newY = Mathf.Lerp(
                 panel.sizeDelta.y,
@@ -76,13 +101,19 @@ public class DropdownUI : MonoBehaviour
             );
 
             panel.sizeDelta =
-                new Vector2(panel.sizeDelta.x, newY);
+                new Vector2(
+                    panel.sizeDelta.x,
+                    newY
+                );
 
             yield return null;
         }
 
-        // 정확히 맞춤
+        // 정확한 값 보정
         panel.sizeDelta =
-            new Vector2(panel.sizeDelta.x, target);
+            new Vector2(
+                panel.sizeDelta.x,
+                target
+            );
     }
 }
