@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 435d8086811e8f540a69f5d006becbb7
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 263553
+  packageName: Stylized Characters
+  packageVersion: 1.0
+  assetPath: Assets/TirgamesAssets/StylizedWorld/Characters/AnimControllers/StylizedCharacterAnimCtrl.controller
+  uploadId: 608655

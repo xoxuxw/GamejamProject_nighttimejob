@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: ab5ac8830e18e014eb64b336e899bed8
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 112000000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 263553
+  packageName: Stylized Characters
+  packageVersion: 1.0
+  assetPath: Assets/TirgamesAssets/StylizedWorld/Characters/Scenes/StylizedCharacters/LightingData.asset
+  uploadId: 608655

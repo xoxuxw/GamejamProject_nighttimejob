@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: c5aa43281f5211246afd20d280da9e6b
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 263553
+  packageName: Stylized Characters
+  packageVersion: 1.0
+  assetPath: Assets/TirgamesAssets/StylizedWorld/Characters/Models/Materials/cs_solid_black.mat
+  uploadId: 608655
