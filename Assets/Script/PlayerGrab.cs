@@ -4,23 +4,31 @@ using UnityEngine.InputSystem;
 public class PlayerGrab : MonoBehaviour
 {
     private GrabLitch grabLitch;
-    public Transform holdParent;
+
+    [Header("연결 설정")]
+    public Transform holdParent; // 물건이 붙을 위치 (예: 손 오브젝트)
     private GameObject currentGrabbedObject;
+
+    [Header("던지기 설정")]
+    public float throwForce = 15f;
 
     void Awake()
     {
+        // 자식 오브젝트에 있을 GrabLitch(트리거)를 찾음
         grabLitch = GetComponentInChildren<GrabLitch>();
     }
 
     void Update()
     {
-        // 1. 왼쪽 클릭: 잡기 또는 놓기
+        // 1. 왼쪽 클릭: 잡기 / 놓기
         if (Mouse.current.leftButton.wasPressedThisFrame)
         {
             if (currentGrabbedObject == null)
             {
                 if (grabLitch != null && grabLitch.canGrab && grabLitch.targetObject != null)
+                {
                     Grab(grabLitch.targetObject);
+                }
             }
             else
             {
@@ -28,7 +36,7 @@ public class PlayerGrab : MonoBehaviour
             }
         }
 
-        // 2. 우클릭: 잡은 상태에서 레이어별 상호작용 (우클릭 액션)
+        // 2. 오른쪽 클릭: 잡은 상태에서 상호작용 (던지기 등)
         if (Mouse.current.rightButton.wasPressedThisFrame && currentGrabbedObject != null)
         {
             HandleInteraction(currentGrabbedObject);
@@ -37,7 +45,6 @@ public class PlayerGrab : MonoBehaviour
 
     void HandleInteraction(GameObject obj)
     {
-        // 레이어 번호를 이름으로 변환해서 체크
         string layerName = LayerMask.LayerToName(obj.layer);
 
         switch (layerName)
@@ -46,45 +53,46 @@ public class PlayerGrab : MonoBehaviour
                 InteractWithNPC(obj);
                 break;
             case "Broomstick":
-                InteractWithBroomstick(obj);
+                Debug.Log("Broomstick 상호작용");
                 break;
             case "Scanner":
-                InteractWithScanner(obj);
-                break;
-            default:
-                Debug.Log("이 물건은 특수 상호작용이 없습니다.");
+                Debug.Log("Scanner 상호작용");
                 break;
         }
     }
 
-    // --- 레이어별 상세 로직 뼈대 ---
-
     void InteractWithNPC(GameObject npc)
     {
-        Debug.Log("BadNPC 상호작용");
-        // 예: npc.GetComponent<NPCAction>().Scare();
-    }
+        // 던지기 로직
+        npc.transform.SetParent(null);
 
-    void InteractWithBroomstick(GameObject broom)
-    {
-        Debug.Log("Broomstick 상호작용");
-    }
+        Rigidbody rb = npc.GetComponent<Rigidbody>();
+        Collider col = npc.GetComponent<Collider>();
 
-    void InteractWithScanner(GameObject scanner)
-    {
-        Debug.Log("Scanner 상호작용");
-    }
+        if (col != null) col.enabled = true;
+        if (rb != null)
+        {
+            rb.isKinematic = false;
+            rb.useGravity = true;
+            // 정면 약간 위쪽으로 던지기
+            Vector3 throwDir = (transform.forward + Vector3.up * 0.1f).normalized;
+            rb.AddForce(throwDir * throwForce, ForceMode.Impulse);
+            // 약간의 회전 추가
+            rb.AddTorque(Random.insideUnitSphere * 5f, ForceMode.Impulse);
+        }
 
-    // --- 잡기 및 놓기 기본 로직 ---
+        currentGrabbedObject = null;
+        Debug.Log("NPC를 던졌습니다!");
+    }
 
     void Grab(GameObject obj)
     {
         currentGrabbedObject = obj;
         Rigidbody rb = obj.GetComponent<Rigidbody>();
-        if (rb != null) { rb.isKinematic = true; rb.useGravity = false; }
-
         Collider col = obj.GetComponent<Collider>();
-        if (col != null) col.enabled = false;
+
+        if (rb != null) { rb.isKinematic = true; rb.useGravity = false; }
+        if (col != null) col.enabled = false; // 잡는 동안 충돌 방지
 
         obj.transform.SetParent(holdParent);
         obj.transform.localPosition = Vector3.zero;
@@ -93,10 +101,12 @@ public class PlayerGrab : MonoBehaviour
 
     void Drop()
     {
-        Rigidbody rb = currentGrabbedObject.GetComponent<Rigidbody>();
-        if (rb != null) { rb.isKinematic = false; rb.useGravity = true; }
+        if (currentGrabbedObject == null) return;
 
+        Rigidbody rb = currentGrabbedObject.GetComponent<Rigidbody>();
         Collider col = currentGrabbedObject.GetComponent<Collider>();
+
+        if (rb != null) { rb.isKinematic = false; rb.useGravity = true; }
         if (col != null) col.enabled = true;
 
         currentGrabbedObject.transform.SetParent(null);

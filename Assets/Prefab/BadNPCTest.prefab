@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 1096508982054580158}
   - component: {fileID: 7575979250228573445}
   - component: {fileID: 1204250141681502248}
-  m_Layer: 11
+  m_Layer: 12
   m_Name: BadNPCTest
   m_TagString: Untagged
   m_Icon: {fileID: 5132851093641282708, guid: 0000000000000000d000000000000000, type: 0}
