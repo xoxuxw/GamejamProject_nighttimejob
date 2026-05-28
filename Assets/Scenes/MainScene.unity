@@ -230,9 +230,9 @@ RectTransform:
   - {fileID: 1801336339}
   m_Father: {fileID: 335068285}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 50, y: -211.8}
   m_SizeDelta: {x: 293.4, y: 80}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &9470439
@@ -1345,7 +1345,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &195209392
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3975,9 +3975,9 @@ RectTransform:
   - {fileID: 223371052}
   m_Father: {fileID: 335068285}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 50, y: -383.6}
   m_SizeDelta: {x: 458.4, y: 80}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &987246524
@@ -5512,7 +5512,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TaskListUI
   tasks:
   - taskText: "\uBC14\uB2E5 \uC4F8\uAE30"
-    subText: ( 4 / 3 )
+    subText: ( 3 / 4)
     completed: 0
   - taskText: "\uC7AC\uACE0 \uCC44\uC6B0\uAE30"
     subText: ( 8 / 10 )
@@ -8471,9 +8471,9 @@ RectTransform:
   - {fileID: 263602140}
   m_Father: {fileID: 335068285}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 50, y: -40}
   m_SizeDelta: {x: 293.4, y: 80}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1952998506
