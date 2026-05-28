@@ -61,55 +61,59 @@ public class PlayerGrab : MonoBehaviour
         }
     }
 
-    void InteractWithNPC(GameObject npc)
-    {
-        // 던지기 로직
-        npc.transform.SetParent(null);
-
-        Rigidbody rb = npc.GetComponent<Rigidbody>();
-        Collider col = npc.GetComponent<Collider>();
-
-        if (col != null) col.enabled = true;
-        if (rb != null)
-        {
-            rb.isKinematic = false;
-            rb.useGravity = true;
-            // 정면 약간 위쪽으로 던지기
-            Vector3 throwDir = (transform.forward + Vector3.up * 0.1f).normalized;
-            rb.AddForce(throwDir * throwForce, ForceMode.Impulse);
-            // 약간의 회전 추가
-            rb.AddTorque(Random.insideUnitSphere * 5f, ForceMode.Impulse);
-        }
-
-        currentGrabbedObject = null;
-        Debug.Log("NPC를 던졌습니다!");
-    }
-
     void Grab(GameObject obj)
     {
         currentGrabbedObject = obj;
         Rigidbody rb = obj.GetComponent<Rigidbody>();
         Collider col = obj.GetComponent<Collider>();
-
         if (rb != null) { rb.isKinematic = true; rb.useGravity = false; }
-        if (col != null) col.enabled = false; // 잡는 동안 충돌 방지
-
+        if (col != null) col.enabled = false;
         obj.transform.SetParent(holdParent);
         obj.transform.localPosition = Vector3.zero;
         obj.transform.localRotation = Quaternion.identity;
+
+        // Unit 이동 중지
+        Unit unit = obj.GetComponent<Unit>();
+        if (unit != null) unit.OnGrabbed();
     }
 
     void Drop()
     {
         if (currentGrabbedObject == null) return;
-
         Rigidbody rb = currentGrabbedObject.GetComponent<Rigidbody>();
         Collider col = currentGrabbedObject.GetComponent<Collider>();
-
         if (rb != null) { rb.isKinematic = false; rb.useGravity = true; }
         if (col != null) col.enabled = true;
-
         currentGrabbedObject.transform.SetParent(null);
+
+        // Unit 이동 재개
+        Unit unit = currentGrabbedObject.GetComponent<Unit>();
+        if (unit != null) unit.OnReleased();
+
         currentGrabbedObject = null;
     }
+
+    void InteractWithNPC(GameObject npc)
+    {
+        npc.transform.SetParent(null);
+        Rigidbody rb = npc.GetComponent<Rigidbody>();
+        Collider col = npc.GetComponent<Collider>();
+        if (col != null) col.enabled = true;
+        if (rb != null)
+        {
+            rb.isKinematic = false;
+            rb.useGravity = true;
+            Vector3 throwDir = (transform.forward + Vector3.up * 0.1f).normalized;
+            rb.AddForce(throwDir * throwForce, ForceMode.Impulse);
+            rb.AddTorque(Random.insideUnitSphere * 5f, ForceMode.Impulse);
+        }
+
+        // OnReleased 대신 OnThrown 호출!
+        Unit unit = npc.GetComponent<Unit>();
+        if (unit != null) unit.OnThrown();
+
+        currentGrabbedObject = null;
+        Debug.Log("NPC를 던졌습니다!");
+    }
+
 }
