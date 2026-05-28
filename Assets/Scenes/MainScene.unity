@@ -2895,13 +2895,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TaskListUI
   tasks:
   - taskText: "\uBC14\uB2E5 \uC4F8\uAE30"
-    subText: ( 3 / 4 )
+    subText: ( 4 / 3 )
     completed: 0
   - taskText: "\uC7AC\uACE0 \uCC44\uC6B0\uAE30"
-    subText: ( 10 / 8 )
+    subText: ( 8 / 10 )
     completed: 0
   - taskText: "\uBB3C\uAC74 \uACC4\uC0B0\uD558\uAE30"
-    subText: ( 8 / 3 )
+    subText: ( 3 / 8 )
     completed: 0
   contentParent: {fileID: 988991390}
   textPrefab: {fileID: 1580661445066901572, guid: ca6ce4c8490b642fd80cb4471a8fa2a3, type: 3}
