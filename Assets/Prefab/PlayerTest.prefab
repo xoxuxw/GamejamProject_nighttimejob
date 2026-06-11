@@ -161,7 +161,6 @@ Transform:
   m_Children:
   - {fileID: 7552551353699631776}
   - {fileID: 7784685373153809269}
-  - {fileID: 2992265203279012974}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &2810548969857311318
@@ -256,6 +255,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c4a095e77da120f4386d0a26c78ed48b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
+  cameraTransform: {fileID: 7784685373153809269}
+  mouseSensitivity: 0.1
+  moveSpeed: 5
   jumpForce: 5
   rayLength: 1.1
   groundLayer:
@@ -301,6 +303,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerGrab
   holdParent: {fileID: 2992265203279012974}
+  throwForce: 15
 --- !u!1 &5434586463923978572
 GameObject:
   m_ObjectHideFlags: 0
@@ -332,7 +335,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 2992265203279012974}
   m_Father: {fileID: 4308260069533053733}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!20 &307091170072330159
@@ -462,10 +466,10 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5572171252787423824}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.7, y: 0, z: 1.5}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.70000005, y: -0.5, z: 1.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 4308260069533053733}
+  m_Father: {fileID: 7784685373153809269}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

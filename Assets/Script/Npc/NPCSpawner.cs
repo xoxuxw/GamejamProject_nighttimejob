@@ -5,49 +5,40 @@ using UnityEngine;
 public class NPCSpawner : MonoBehaviour
 {
     [Header("프리팹 설정")]
-    [SerializeField] private GameObject normalNPCPrefab; // 정상 손님 프리팹
-    [SerializeField] private GameObject badNPCPrefab;    // BadNPC 레이어를 가진 프리팹
+    [SerializeField] private GameObject normalNPCPrefab;
+    [SerializeField] private GameObject badNPCPrefab;
 
     [Range(0f, 100f)]
-    [SerializeField] private float badNPCOccurChance = 15f; // BadNPC가 태어날 확률 (15%)
+    [SerializeField] private float badNPCOccurChance = 15f;
 
-    [Header("순찰 이름 규칙 설정")]
-    [SerializeField] private string waypointNamePrefix = "spot_"; // 찾을 오브젝트 이름의 접두사
+    [Header("스폰 이름 규칙 설정")]
+    [SerializeField] private string waypointNamePrefix = "spawn_"; // [수정] spawn_ 으로 수집하도록 유도
 
-    // 자동으로 채워질 순찰 및 스폰 위치 리스트
+    [Header("순찰 위치 직접 설정")]
+    // [추가] 인스펙터에서 spot_ 들을 그룹으로 묶은 부모 오브젝트의 자식들을 싹 넣어줄 리스트
+    [SerializeField] private List<Transform> patrolWaypoints = new List<Transform>();
+
     private List<Transform> spawnAndPatrolWaypoints = new List<Transform>();
 
     [Header("제한 설정")]
-    [SerializeField] private int maxNPCCount = 10;       // 최대 스폰 인원 수
-    [SerializeField] private float spawnInterval = 3f;   // 스폰 체크 주기 (초)
+    [SerializeField] private int maxNPCCount = 10;
+    [SerializeField] private float spawnInterval = 3f;
 
-    // 현재 맵에 살아있는 NPC들을 관리할 리스트
     private List<GameObject> activeNPCs = new List<GameObject>();
 
     private void Awake()
     {
-        // 게임이 시작되자마자 씬에서 규칙에 맞는 이름을 가진 오브젝트를 자동으로 모두 찾습니다.
         FindWaypointsAutomatically();
     }
 
     private void Start()
     {
-        if (spawnAndPatrolWaypoints == null || spawnAndPatrolWaypoints.Count == 0)
-        {
-            Debug.LogError($"스포너가 '{waypointNamePrefix}'로 시작하는 오브젝트를 찾지 못했습니다! 씬의 오브젝트 이름을 확인해주세요.");
-            return;
-        }
-
-        // 반복적으로 스폰을 시도하는 루틴 시작
         StartCoroutine(SpawnRoutine());
     }
 
-    // 이름 규칙에 따라 오브젝트를 자동으로 찾아 리스트에 수집하는 함수
     private void FindWaypointsAutomatically()
     {
-        spawnAndPatrolWaypoints.Clear();
         int index = 1;
-
         while (true)
         {
             string targetName = waypointNamePrefix + index;
@@ -63,18 +54,15 @@ public class NPCSpawner : MonoBehaviour
                 break;
             }
         }
-
-        Debug.Log($"[NPCSpawner] '{waypointNamePrefix}' 규칙을 가진 지점을 자동으로 {spawnAndPatrolWaypoints.Count}개 찾아서 할당했습니다.");
+        Debug.Log($"[NPCSpawner] 스폰 지점을 자동으로 {spawnAndPatrolWaypoints.Count}개 찾았습니다.");
     }
 
     private IEnumerator SpawnRoutine()
     {
         while (true)
         {
-            // 리스트에서 이미 파괴된(죽거나 사라진) NPC 제거
             activeNPCs.RemoveAll(npc => npc == null);
 
-            // 현재 살아있는 NPC가 10명 미만일 때만 스폰 진행
             if (activeNPCs.Count < maxNPCCount)
             {
                 SpawnNPC();
@@ -86,11 +74,12 @@ public class NPCSpawner : MonoBehaviour
 
     private void SpawnNPC()
     {
-        // [수정 완료] 수집된 지점들 중에서 무작위로 하나를 골라 스폰 위치로 지정합니다.
+        if (spawnAndPatrolWaypoints.Count == 0) return;
+
+        // 1. spawn_ 지점 중 랜덤하게 골라 스폰 위치 결정
         int randomIndex = Random.Range(0, spawnAndPatrolWaypoints.Count);
         Vector3 spawnPosition = spawnAndPatrolWaypoints[randomIndex].position;
 
-        // 확률에 따른 프리팹 결정
         GameObject prefabToSpawn = normalNPCPrefab;
         float roll = Random.Range(0f, 100f);
 
@@ -99,16 +88,14 @@ public class NPCSpawner : MonoBehaviour
             prefabToSpawn = badNPCOccurChance > 0 && badNPCPrefab != null ? badNPCPrefab : normalNPCPrefab;
         }
 
-        // 선택된 무작위 위치에 프리팹 생성
         GameObject spawnedNPC = Instantiate(prefabToSpawn, spawnPosition, Quaternion.identity);
+        activeNPCs.Add(spawnedNPC);
 
-        // 생성된 NPC에게 순찰 지점 리스트 주입
+        // 2. [핵심 추가] 태어난 NPC에게 스폰 지점이 아닌, "순찰(patrolWaypoints) 지점 리스트"를 강제로 쥐여줍니다.
         Unit unitScript = spawnedNPC.GetComponent<Unit>();
         if (unitScript != null)
         {
-            unitScript.SetupPatrolWaypoints(spawnAndPatrolWaypoints);
+            unitScript.SetupPatrolWaypoints(patrolWaypoints);
         }
-
-        activeNPCs.Add(spawnedNPC);
     }
 }

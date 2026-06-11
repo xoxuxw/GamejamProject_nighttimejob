@@ -9,18 +9,21 @@ public class GrabLitch : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        // 레이어가 BadNPC인지 확인
-        if (other.gameObject.layer == LayerMask.NameToLayer("BadNPC"))
+        // [수정] 레이어가 BadNPC 뿐만 아니라 일반 "NPC" 레이어도 잡을 수 있도록 조건 추가
+        if (other.gameObject.layer == LayerMask.NameToLayer("BadNPC") ||
+            other.gameObject.layer == LayerMask.NameToLayer("NPC"))
+        {
+            canGrab = true;
+            targetObject = other.gameObject; // 닿은 오브젝트 저장
+            Debug.Log($"대상 발견 (NPC계열): {targetObject.name}");
+        }
+        else if (other.gameObject.layer == LayerMask.NameToLayer("Broomstick"))
         {
             canGrab = true;
             targetObject = other.gameObject; // 닿은 오브젝트 저장
             Debug.Log($"대상 발견: {targetObject.name}");
-        }else if (other.gameObject.layer == LayerMask.NameToLayer("Broomstick"))
-        {
-            canGrab = true;
-            targetObject = other.gameObject; // 닿은 오브젝트 저장
-            Debug.Log($"대상 발견: {targetObject.name}");
-        }else if (other.gameObject.layer == LayerMask.NameToLayer("Scanner"))
+        }
+        else if (other.gameObject.layer == LayerMask.NameToLayer("Scanner"))
         {
             canGrab = true;
             targetObject = other.gameObject; // 닿은 오브젝트 저장
@@ -35,7 +38,7 @@ public class GrabLitch : MonoBehaviour
         {
             Debug.Log($"대상 사라짐: {targetObject.name}");
             canGrab = false;
-            targetObject = null; // 참조 해제
+            targetObject = null;
         }
     }
 }
