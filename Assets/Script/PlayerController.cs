@@ -49,6 +49,11 @@ public class PlayerController : MonoBehaviour
 
         HandleGroundCheck();
         HandleRotation();
+    }
+
+    // [중요] 물리 연산(이동)은 Update가 아니라 FixedUpdate에서 처리해야 물리 고장이 나지 않습니다.
+    void FixedUpdate()
+    {
         HandleMovement();
     }
 
@@ -67,10 +72,16 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    // 물리 기반 이동으로 전면 수정
     void HandleMovement()
     {
+        // 입력에 따른 이동 방향 계산
         Vector3 moveDirection = transform.forward * moveInput.y + transform.right * moveInput.x;
-        transform.position += moveDirection * moveSpeed * Time.deltaTime;
+        moveDirection.Normalize(); // 대각선 이동 시 빨라짐 방지
+
+        // Rigidbody를 사용해 벽이나 NPC와 정상적으로 밀쳐내며 이동 (관통 및 강제 밀침 현상 차단)
+        Vector3 targetPosition = player_rigidbody.position + moveDirection * moveSpeed * Time.fixedDeltaTime;
+        player_rigidbody.MovePosition(targetPosition);
     }
 
     void HandleGroundCheck()
