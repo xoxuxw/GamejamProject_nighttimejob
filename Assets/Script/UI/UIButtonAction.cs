@@ -17,7 +17,8 @@ public class UIButtonAction : MonoBehaviour
     [SerializeField] private ButtonAction action = ButtonAction.TogglePanel;
     [SerializeField] private GameObject targetPanel;
     [SerializeField] private GameObject[] otherPanels;
-    [SerializeField] private string sceneName; // LoadScene 전용
+    [SerializeField] private string sceneName;
+    [SerializeField] private GameObject confirmPanel;
 
     void Awake()
     {
@@ -69,6 +70,23 @@ public class UIButtonAction : MonoBehaviour
                     Debug.LogError("sceneName이 비어 있습니다!", this);
                     return;
                 }
+
+                // confirmPanel이 꺼져 있을 때만 확인 패널 표시
+                if (SceneManager.GetActiveScene().name == "MainScene" && sceneName == "Lobby")
+                {
+                    if (confirmPanel == null)
+                    {
+                        Debug.LogError("confirmPanel이 연결되지 않았습니다!", this);
+                        return;
+                    }
+
+                    if (!confirmPanel.activeSelf)
+                    {
+                        confirmPanel.SetActive(true);
+                        return;
+                    }
+                }
+
                 SceneManager.LoadScene(sceneName);
                 break;
         }

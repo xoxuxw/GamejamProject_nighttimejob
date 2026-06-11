@@ -1013,6 +1013,7 @@ MonoBehaviour:
   targetPanel: {fileID: 481081950}
   otherPanels: []
   sceneName: 
+  confirmPanel: {fileID: 0}
 --- !u!114 &295539988
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2185,6 +2186,7 @@ MonoBehaviour:
   targetPanel: {fileID: 175335009}
   otherPanels: []
   sceneName: 
+  confirmPanel: {fileID: 0}
 --- !u!114 &759529329
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2444,6 +2446,7 @@ MonoBehaviour:
   targetPanel: {fileID: 0}
   otherPanels: []
   sceneName: MainScene
+  confirmPanel: {fileID: 0}
 --- !u!1 &818221985
 GameObject:
   m_ObjectHideFlags: 0
@@ -3290,6 +3293,7 @@ MonoBehaviour:
   targetPanel: {fileID: 481081950}
   otherPanels: []
   sceneName: 
+  confirmPanel: {fileID: 0}
 --- !u!114 &1224744576
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3808,6 +3812,7 @@ MonoBehaviour:
   targetPanel: {fileID: 481081950}
   otherPanels: []
   sceneName: 
+  confirmPanel: {fileID: 0}
 --- !u!1 &1430134340
 GameObject:
   m_ObjectHideFlags: 0
@@ -4904,6 +4909,7 @@ MonoBehaviour:
   targetPanel: {fileID: 175335009}
   otherPanels: []
   sceneName: 
+  confirmPanel: {fileID: 0}
 --- !u!1 &1719789230
 GameObject:
   m_ObjectHideFlags: 0
