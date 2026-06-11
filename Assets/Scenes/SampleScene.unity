@@ -210,7 +210,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::NPCSpawner
   normalNPCPrefab: {fileID: 5119422442172078805, guid: e508718dab5fe9744886f64bf5b55aee, type: 3}
   badNPCPrefab: {fileID: 7141277603286936178, guid: 4e8b9c4d849799a43a8f61f26ff91e19, type: 3}
-  badNPCOccurChance: 24.9
+  badNPCOccurChance: 100
   waypointNamePrefix: spot_
   maxNPCCount: 10
   spawnInterval: 3
