@@ -4,207 +4,141 @@ using UnityEngine;
 
 public class Unit : MonoBehaviour
 {
-    [Header("¼øÂû À§Ä¡ ¼³Á¤")]
+    [Header("ìˆœì°° ìœ„ì¹˜ ì„¤ì •")]
     [SerializeField] private List<Transform> patrolWaypoints = new List<Transform>();
     [SerializeField] private float minWaitTime = 2f;
     [SerializeField] private float maxWaitTime = 5f;
 
-    [Header("ÀÌµ¿ ¼³Á¤")]
+    [Header("ì´ë™ ì„¤ì •")]
     [SerializeField] private float speed = 5f;
 
     private Vector3[] path;
     private int targetIndex;
     private Transform currentTarget;
 
-    // --- Áßº¹ ¹æ¹® ¹æÁö¸¦ À§ÇÑ ¸®½ºÆ® ---
     private List<Transform> availableWaypoints = new List<Transform>();
 
     private bool isGrabbed = false;
     private bool isThrown = false;
-    private bool isWaiting = false;
 
     private Rigidbody rb;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
-        // ÅÂ¾î³ªÀÚ¸¶ÀÚ ³Ñ¾îÁöÁö ¾Ê°Ô ¹°¸® È¸ÀüÃà Àá±İ
         LockRotation(true);
     }
 
     private void Start()
     {
-        if (patrolWaypoints != null && patrolWaypoints.Count > 0)
+        if (patrolWaypoints != null && patrolWaypoints.Count > 0 && availableWaypoints.Count == 0)
         {
-            ResetAvailableWaypoints();
-            MoveToNextRandomWaypoint();
+            StartFirstPatrol();
         }
+    }
+
+    public void StartFirstPatrol()
+    {
+        if (isGrabbed || isThrown) return;
+        ResetAvailableWaypoints();
+        MoveToNextRandomWaypoint();
     }
 
     public void SetupPatrolWaypoints(List<Transform> waypoints)
     {
         patrolWaypoints = new List<Transform>(waypoints);
         ResetAvailableWaypoints();
-        MoveToNextRandomWaypoint();
     }
 
     private void ResetAvailableWaypoints()
     {
-        if (patrolWaypoints == null || patrolWaypoints.Count == 0) return;
-        availableWaypoints = new List<Transform>(patrolWaypoints);
+        if (patrolWaypoints != null)
+        {
+            availableWaypoints = new List<Transform>(patrolWaypoints);
+        }
     }
 
     private void MoveToNextRandomWaypoint()
     {
-        if (patrolWaypoints == null || patrolWaypoints.Count == 0) return;
-
-        isWaiting = false;
+        if (isGrabbed || isThrown || !enabled) return;
 
         if (availableWaypoints == null || availableWaypoints.Count == 0)
         {
             ResetAvailableWaypoints();
         }
 
-        if (availableWaypoints.Count == 0) return;
-
-        int randomIndex = Random.Range(0, availableWaypoints.Count);
-        currentTarget = availableWaypoints[randomIndex];
-        availableWaypoints.RemoveAt(randomIndex);
-
-        ForceStandUp();
-        LockRotation(true);
-
-        PathReqeustManager.ReqeustPath(transform.position, currentTarget.position, OnPathFound);
-    }
-
-    public void OnGrabbed()
-    {
-        isGrabbed = true;
-        isThrown = false;
-        isWaiting = false;
-
-        LockRotation(false);
-
-        StopCoroutine("FollowPath");
-        StopCoroutine("WaitForLanding");
-        StopCoroutine("WaitAtWaypoint");
-    }
-
-    public void OnReleased()
-    {
-        isGrabbed = false;
-        targetIndex = 0;
-
-        if (currentTarget != null)
-            PathReqeustManager.ReqeustPath(transform.position, currentTarget.position, OnPathFound);
-        else
-            MoveToNextRandomWaypoint();
-    }
-
-    public void OnThrown()
-    {
-        isGrabbed = false;
-        isThrown = true;
-        isWaiting = false;
-
-        LockRotation(false);
-
-        StopCoroutine("FollowPath");
-        StopCoroutine("WaitAtWaypoint");
-        StartCoroutine("WaitForLanding");
-    }
-
-    IEnumerator WaitForLanding()
-    {
-        yield return new WaitForSeconds(0.4f);
-
-        while (rb != null && GetVelocity().magnitude > 0.3f)
+        if (availableWaypoints.Count > 0)
         {
-            yield return null;
-        }
+            int randomIndex = Random.Range(0, availableWaypoints.Count);
+            currentTarget = availableWaypoints[randomIndex];
+            availableWaypoints.RemoveAt(randomIndex);
 
-        isThrown = false;
-        targetIndex = 0;
-
-        ForceStandUp();
-        LockRotation(true);
-
-        if (currentTarget != null)
             PathReqeustManager.ReqeustPath(transform.position, currentTarget.position, OnPathFound);
-        else
-            MoveToNextRandomWaypoint();
+        }
     }
-
-    // Unit.cs ³»ºÎ ¼öÁ¤ÇÒ ºÎºĞ
 
     public void OnPathFound(Vector3[] newPath, bool pathSuccessful)
     {
-        if (pathSuccessful && !isGrabbed && !isThrown && !isWaiting)
+        if (pathSuccessful && !isGrabbed && !isThrown && enabled)
         {
             path = newPath;
             targetIndex = 0;
-            StopCoroutine("FollowPath");
-            StartCoroutine("FollowPath");
+            StopAllCoroutines();
+            StartCoroutine(FollowPath());
         }
-        else if (!pathSuccessful && !isGrabbed && !isThrown && !isWaiting)
+        // [â˜… ì‹¤ì‹œê°„ 0.2ì´ˆ ë§µ ê°±ì‹  ì¶©ëŒ ë°©ì–´] ì´ë™ ì¤‘ í˜¹ì€ ìŠ¤í° ì§í›„ ì—°ì‚° ìœ ì‹¤ ì‹œ ë¬´ì¡°ê±´ ìë™ ì‹¬íì†Œìƒìˆ 
+        else if (!isGrabbed && !isThrown && enabled)
         {
-            // [¼öÁ¤] Áï½Ã Àç¿äÃ»ÇÏ´Â ¹«ÇÑ ·çÇÁ ¹ö±×¸¦ Áö¿ì°í, ¾ÈÀüÇÏ°Ô ÄğÅ¸ÀÓÀ» °¡Áö´Â ÄÚ·çÆ¾À» ½ÇÇàÇÕ´Ï´Ù.
-            StopCoroutine("HandlePathRequestFailure");
-            StartCoroutine("HandlePathRequestFailure");
+            StopAllCoroutines();
+            StartCoroutine(RetryPathRequestDelay());
         }
     }
 
-    // [Ãß°¡] ±æÃ£±â ½ÇÆĞ ½Ã ÇÁ·¹ÀÓ ¸¶ºñ¸¦ Â÷´ÜÇÏ°í ¾ÈÀüÇÏ°Ô Àç½ÃµµÇÏ´Â ÄÚ·çÆ¾
-    private IEnumerator HandlePathRequestFailure()
+    private IEnumerator RetryPathRequestDelay()
     {
-        // 0.5ÃÊ°£ ´ë±âÇÏ¿© Å¥¿¡ ¸í·ÉÀÌ ¼öÃµ °³ ½×ÀÌ´Â °úºÎÇÏ¸¦ ¿øÃµ ¹æÁö
-        yield return new WaitForSeconds(0.5f);
-
-        if (!isGrabbed && !isThrown && !isWaiting)
+        // 0.25ì´ˆ ì‰¬ê³  ê°±ì‹  íƒ€ì´ë°ì„ ë¹—ê²¨ ë‚˜ê°€ ë‹¤ì‹œ ì™„ë²½í•˜ê²Œ íŒ¨ìŠ¤ë¥¼ ìš”ì²­í•©ë‹ˆë‹¤.
+        yield return new WaitForSeconds(0.25f);
+        if (!isGrabbed && !isThrown && enabled)
         {
             MoveToNextRandomWaypoint();
         }
     }
 
-    // Unit.csÀÇ FollowPath() ÄÚ·çÆ¾ ³»ºÎ ¼öÁ¤
     IEnumerator FollowPath()
     {
-        if (path.Length == 0)
-        {
-            StartCoroutine("WaitAtWaypoint");
-            yield break;
-        }
+        if (path == null || path.Length == 0) yield break;
         Vector3 currentWaypoint = path[0];
 
         while (true)
         {
             if (isGrabbed || isThrown) yield break;
 
-            // [º¸¿Ï] °Å¸®¸¦ 0.4f·Î ´Ã·ÁÁÖ¾î ¹°¸® ¿ÀÂ÷ ¶§¹®¿¡ ¸ØÄ©°Å¸®´Â ¹ö±×¸¦ ¿¹¹æÇÕ´Ï´Ù.
-            if (Vector3.Distance(transform.position, currentWaypoint) < 0.4f)
+            // ëª©ì ì§€ ë…¸ë“œ ë³´ì •ìš© (ê±°ë¦¬ íŒì • ìœ ì—°í™”)
+            Vector3 currentPosFixed = new Vector3(transform.position.x, 0, transform.position.z);
+            Vector3 waypointPosFixed = new Vector3(currentWaypoint.x, 0, currentWaypoint.z);
+
+            if (Vector3.Distance(currentPosFixed, waypointPosFixed) < 0.2f)
             {
                 targetIndex++;
                 if (targetIndex >= path.Length)
                 {
-                    StopCoroutine("FollowPath");
-                    StartCoroutine("WaitAtWaypoint");
+                    StartCoroutine(WaitAtWaypoint());
                     yield break;
                 }
                 currentWaypoint = path[targetIndex];
             }
 
-            // ¹°¸® ÀÌµ¿ ¹× ¹°¸® È¸Àü
-            Vector3 nextPosition = Vector3.MoveTowards(transform.position, currentWaypoint, speed * Time.deltaTime);
-            if (rb != null) rb.MovePosition(nextPosition);
-            else transform.position = nextPosition;
+            Vector3 targetPos = new Vector3(currentWaypoint.x, transform.position.y, currentWaypoint.z);
+            transform.position = Vector3.MoveTowards(transform.position, targetPos, speed * Time.deltaTime);
 
-            Vector3 direction = (currentWaypoint - transform.position).normalized;
+            Vector3 direction = (targetPos - transform.position).normalized;
             if (direction != Vector3.zero)
             {
                 Quaternion targetRotation = Quaternion.LookRotation(direction);
-                Quaternion nextRotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 10f);
-                if (rb != null) rb.MoveRotation(nextRotation);
-                else transform.rotation = nextRotation;
+                Quaternion nextRotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 5f);
+                nextRotation.x = 0;
+                nextRotation.z = 0;
+                transform.rotation = nextRotation;
             }
 
             yield return null;
@@ -213,14 +147,8 @@ public class Unit : MonoBehaviour
 
     IEnumerator WaitAtWaypoint()
     {
-        isWaiting = true;
         float waitTime = Random.Range(minWaitTime, maxWaitTime);
         yield return new WaitForSeconds(waitTime);
-
-        if (availableWaypoints == null || availableWaypoints.Count == 0)
-        {
-            ResetAvailableWaypoints();
-        }
 
         MoveToNextRandomWaypoint();
     }
@@ -228,15 +156,7 @@ public class Unit : MonoBehaviour
     private void LockRotation(bool shouldLock)
     {
         if (rb == null) return;
-
-        if (shouldLock)
-        {
-            rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
-        }
-        else
-        {
-            rb.constraints = RigidbodyConstraints.None;
-        }
+        rb.constraints = shouldLock ? (RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ) : RigidbodyConstraints.None;
     }
 
     private void ForceStandUp()
@@ -244,28 +164,74 @@ public class Unit : MonoBehaviour
         if (rb == null) return;
 
         rb.angularVelocity = Vector3.zero;
-        if (rb != null)
-        {
 #if UNITY_2023_1_OR_NEWER
-            rb.linearVelocity = Vector3.zero;
+        rb.linearVelocity = Vector3.zero;
 #else
-            rb.velocity = Vector3.zero;
+        rb.velocity = Vector3.zero;
 #endif
-        }
 
         Vector3 currentEuler = transform.eulerAngles;
+        currentEuler.x = 0;
+        currentEuler.z = 0;
+        transform.eulerAngles = currentEuler;
 
-        // È¸Àü °íÁ¤ »óÅÂÀÏ ¶§ Æ®·£½ºÆû ´ë½Å ¹°¸® ½Ã½ºÅÛÀ¸·Î ¾ÈÀüÇÏ°Ô Á¤·Ä ÈÄ °íÁ¤
-        Quaternion targetRot = Quaternion.Euler(0f, currentEuler.y, 0f);
-        rb.MoveRotation(targetRot);
+        LockRotation(true);
+        rb.WakeUp();
     }
 
-    private Vector3 GetVelocity()
+    public void OnGrabbed()
     {
-#if UNITY_2023_1_OR_NEWER
-        return rb.linearVelocity;
-#else
-        return rb.velocity;
-#endif
+        isGrabbed = true;
+        StopAllCoroutines();
+        LockRotation(false);
+    }
+
+    public void OnReleased()
+    {
+        isGrabbed = false;
+        isThrown = false;
+        ForceStandUp();
+        MoveToNextRandomWaypoint();
+    }
+
+    public void OnThrown()
+    {
+        isGrabbed = false;
+        isThrown = true;
+        StopAllCoroutines();
+        LockRotation(false);
+        StartCoroutine(CheckThrownStopRoutine());
+    }
+
+    private IEnumerator CheckThrownStopRoutine()
+    {
+        yield return new WaitForSeconds(0.5f);
+        while (isThrown)
+        {
+            if (rb != null && rb.linearVelocity.magnitude < 0.1f)
+            {
+                isThrown = false;
+                ForceStandUp();
+                MoveToNextRandomWaypoint();
+                yield break;
+            }
+            yield return new WaitForSeconds(0.2f);
+        }
+    }
+
+    private void OnTriggerEnter(Collider other) { CheckWaterCollision(other.gameObject); }
+    private void OnCollisionEnter(Collision collision) { CheckWaterCollision(collision.gameObject); }
+
+    private void CheckWaterCollision(GameObject overlayObject)
+    {
+        if (overlayObject.layer == LayerMask.NameToLayer("Water"))
+        {
+            StopAllCoroutines();
+            if (rb != null)
+            {
+                rb.isKinematic = true;
+            }
+            Destroy(gameObject);
+        }
     }
 }
