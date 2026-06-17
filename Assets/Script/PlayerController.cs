@@ -6,11 +6,10 @@ public class PlayerController : MonoBehaviour
     private PlayerInputActions inputActions;
     private Rigidbody player_rigidbody;
     private Vector2 moveInput;
-    private Vector2 mouseLook;
 
     [Header("카메라 설정")]
     public Transform cameraTransform; // 인스펙터에서 Main Camera 연결
-    public float mouseSensitivity = 0.15f;
+    public float mouseSensitivity = 0.1f; // Mouse.current 방식에 맞는 감도 (0.05 ~ 0.2 추천)
     private float xRotation = 0f;
 
     [Header("이동 및 점프")]
@@ -27,11 +26,12 @@ public class PlayerController : MonoBehaviour
         player_rigidbody = GetComponent<Rigidbody>();
         inputActions = new PlayerInputActions();
 
+        // 이동 및 점프 이벤트 연결
         inputActions.Player.Move.performed += ctx => moveInput = ctx.ReadValue<Vector2>();
         inputActions.Player.Move.canceled += ctx => moveInput = Vector2.zero;
         inputActions.Player.Jump.performed += OnJump;
 
-        // 마우스 커서 고정
+        // 마우스 커서 고정 및 숨기기
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
@@ -41,17 +41,10 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        // 마우스 델타값 직접 읽기 (Input Action 에러 방지)
-        if (Mouse.current != null)
-        {
-            mouseLook = Mouse.current.delta.ReadValue();
-        }
-
         HandleGroundCheck();
         HandleRotation();
     }
 
-    // [중요] 물리 연산(이동)은 Update가 아니라 FixedUpdate에서 처리해야 물리 고장이 나지 않습니다.
     void FixedUpdate()
     {
         HandleMovement();
@@ -59,27 +52,43 @@ public class PlayerController : MonoBehaviour
 
     void HandleRotation()
     {
-        float mouseX = mouseLook.x * mouseSensitivity;
-        float mouseY = mouseLook.y * mouseSensitivity;
+        // [방어적 코드] 인풋 매칭 에러 및 NaN 값으로 인한 추락을 원천 차단하기 위해
+        // 현재 활성화된 마우스의 실시간 델타 변화량만 안전하게 수집합니다.
+        Vector2 mouseDelta = Vector2.zero;
 
+        if (Mouse.current != null)
+        {
+            mouseDelta = Mouse.current.delta.ReadValue();
+        }
+
+        // 값이 비정상적으로 튀거나 계산 오류(NaN)가 나는 것을 방지하는 안전장치
+        if (float.IsNaN(mouseDelta.x) || float.IsNaN(mouseDelta.y)) return;
+
+        // 마우스 감도(Sensitivity)를 곱해 회전량 계산
+        float mouseX = mouseDelta.x * mouseSensitivity;
+        float mouseY = mouseDelta.y * mouseSensitivity;
+
+        // 1. 플레이어 몸통 좌우 회전 (Y축 기준 회전)
         transform.Rotate(Vector3.up * mouseX);
 
+        // 2. 카메라 위아래 회전 (X축 기준 회전)
         if (cameraTransform != null)
         {
-            xRotation -= mouseY;
+            xRotation -= mouseY; // 마우스를 위로 올리면 화면이 위를 보도록 마이너스 연산
+
+            // [제한 설정] 고개가 뒤로 뒤집히거나 땅바닥 뚫어보기 방지
             xRotation = Mathf.Clamp(xRotation, -85f, 85f);
+
+            // 카메라의 로컬 회전값(위아래)에만 안전하게 반영
             cameraTransform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
         }
     }
 
-    // 물리 기반 이동으로 전면 수정
     void HandleMovement()
     {
-        // 입력에 따른 이동 방향 계산
         Vector3 moveDirection = transform.forward * moveInput.y + transform.right * moveInput.x;
-        moveDirection.Normalize(); // 대각선 이동 시 빨라짐 방지
+        moveDirection.Normalize();
 
-        // Rigidbody를 사용해 벽이나 NPC와 정상적으로 밀쳐내며 이동 (관통 및 강제 밀침 현상 차단)
         Vector3 targetPosition = player_rigidbody.position + moveDirection * moveSpeed * Time.fixedDeltaTime;
         player_rigidbody.MovePosition(targetPosition);
     }
