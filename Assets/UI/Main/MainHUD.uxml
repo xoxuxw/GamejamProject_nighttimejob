@@ -1,0 +1,25 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI/Main/MainHUD.uss?fileID=7433441132597879392&amp;guid=5d589fc0f63134a6aaae71729ddc2960&amp;type=3#MainHUD"/>
+    <ui:VisualElement name="root" picking-mode="Ignore" class="hud-root" style="flex-grow: 1;">
+        <ui:VisualElement name="top-left" picking-mode="Ignore" class="top-left">
+            <ui:Label name="timer-text" text="00:00" class="timer-box"/>
+            <ui:VisualElement name="money-box" class="money-box">
+                <ui:VisualElement name="money-icon" class="money-icon"/>
+                <ui:Label name="money-text" text="1,000,000" class="money-text"/>
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement name="task-panel" class="task-panel">
+            <ui:Button name="task-header" class="task-header">
+                <ui:Label text="업무 리스트" class="task-header-text"/>
+                <ui:Label name="task-arrow" text="▼" class="task-arrow"/>
+            </ui:Button>
+            <ui:ScrollView name="task-content" class="task-content"/>
+        </ui:VisualElement>
+        <ui:VisualElement name="dialogue-panel" class="dialogue-panel">
+            <ui:Label name="dialogue-name" text="점장님" class="dialogue-name"/>
+            <ui:VisualElement class="dialogue-body">
+                <ui:Label name="dialogue-text" text="" class="dialogue-text"/>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

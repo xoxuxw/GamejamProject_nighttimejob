@@ -1,0 +1,207 @@
+/* 루트 */
+.root {
+    width: 100%;
+    height: 100%;
+    background-color: rgb(230, 230, 230);
+    flex-grow: 1;
+}
+
+/* 타이틀 */
+.title {
+    font-size: 120px;
+    color: rgb(0, 0, 0);
+    margin-top: 80px;
+    margin-left: 80px;
+    -unity-font-style: bold;
+}
+
+/* 메인 메뉴 버튼 컨테이너 */
+.menu-container {
+    margin-top: 100px;
+    margin-left: 80px;
+}
+
+/* 공통 버튼 */
+.menu-btn {
+    font-size: 72px;
+    color: rgb(0, 0, 0);
+    background-color: rgba(0,0,0,0);
+    border-width: 0;
+    margin-bottom: 16px;
+    padding: 0;
+    width: 400px;
+    -unity-text-align: middle-left;
+}
+
+/* 호버 색상 */
+.menu-btn.start:hover    { color: rgb(60, 180, 60); }
+.menu-btn.settings:hover { color: rgb(220, 180, 0); }
+.menu-btn.quit:hover     { color: rgb(210, 50, 50); }
+
+/* ── 오버레이 공통 ── */
+.overlay {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(50, 50, 50, 0.93);
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+.overlay.visible { display: flex; }
+
+/* ── 설정 패널 ── */
+.settings-panel {
+    position: relative;
+    width: 900px;
+    background-color: rgb(65, 65, 65);
+    border-radius: 0;
+    padding-top: 50px;
+    padding-bottom: 60px;
+    padding-left: 80px;
+    padding-right: 80px;
+    align-items: center;
+}
+
+/* X 닫기 버튼 */
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 64px;
+    color: rgb(255, 255, 255);
+    background-color: rgba(0,0,0,0);
+    border-width: 0;
+    padding: 0;
+    width: 80px;
+    height: 80px;
+    -unity-text-align: middle-center;
+}
+.close-btn:hover { color: rgb(210, 50, 50); }
+
+/* 설정 타이틀 */
+.settings-title {
+    font-size: 76px;
+    color: rgb(255, 255, 255);
+    margin-bottom: 20px;
+    -unity-text-align: middle-center;
+}
+
+/* 섹션 타이틀 (소리, 화면) */
+.section-title {
+    font-size: 56px;
+    color: rgb(255, 255, 255);
+    margin-top: 20px;
+    margin-bottom: 20px;
+    -unity-text-align: middle-center;
+    width: 100%;
+}
+
+/* 슬라이더 행 */
+.slider-row {
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 18px;
+    width: 100%;
+}
+
+.slider-label {
+    font-size: 40px;
+    color: rgb(255, 255, 255);
+    width: 160px;
+    -unity-text-align: middle-right;
+    margin-right: 20px;
+}
+
+.slider-field {
+    flex-grow: 1;
+    height: 40px;
+    justify-content: center;
+}
+
+.slider-field > .unity-base-slider__input {
+    flex-grow: 1;
+}
+
+/* 비어있는 부분 */
+.slider-field > .unity-base-slider__tracker {
+    background-color: rgb(110, 110, 110);
+    height: 5px;
+    border-radius: 2px;
+}
+
+/* 채워진 부분 */
+.slider-field > .unity-base-slider__progress {
+    background-color: rgb(220, 220, 220);
+    height: 5px;
+    border-radius: 2px;
+}
+
+/* 드래거 */
+.slider-field > .unity-base-slider__dragger {
+    width: 26px;
+    height: 26px;
+    border-radius: 13px;
+    background-color: rgb(255, 255, 255);
+    border-width: 0;
+    margin-top: -11px;
+}
+
+/* 드롭다운 행 */
+.dropdown-row {
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 18px;
+    width: 100%;
+}
+
+.dropdown-label {
+    font-size: 40px;
+    color: rgb(255, 255, 255);
+    width: 160px;
+    -unity-text-align: middle-right;
+    margin-right: 20px;
+}
+
+.dropdown-field {
+    flex-grow: 1;
+    background-color: rgb(245, 245, 245);
+    border-radius: 4px;
+    border-width: 0;
+    font-size: 34px;
+    color: rgb(0, 0, 0);
+    height: 56px;
+    -unity-text-align: middle-center;
+}
+
+/* ── 확인 패널 ── */
+.confirm-panel {
+    align-items: center;
+    justify-content: center;
+}
+
+.confirm-text {
+    font-size: 64px;
+    color: rgb(255, 255, 255);
+    margin-bottom: 60px;
+    -unity-text-align: middle-center;
+}
+
+.confirm-row {
+    flex-direction: row;
+    width: 600px;
+    justify-content: space-between;
+}
+
+.confirm-btn {
+    font-size: 64px;
+    color: rgb(255, 255, 255);
+    background-color: rgba(0,0,0,0);
+    border-width: 0;
+    padding: 0;
+}
+
+.confirm-btn.yes:hover { color: rgb(210, 50, 50); }
+.confirm-btn.no:hover  { color: rgb(210, 50, 50); }

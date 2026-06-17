@@ -1,0 +1,216 @@
+/* 루트 */
+.pause-root {
+    width: 100%;
+    height: 100%;
+    flex-grow: 1;
+}
+
+/* ── 일시정지 메뉴 ── */
+.pause-menu {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(10, 10, 10, 0.85);
+    align-items: center;
+    justify-content: center;
+}
+
+.pause-title {
+    font-size: 100px;
+    color: rgb(255, 255, 255);
+    -unity-font-style: bold;
+    margin-bottom: 80px;
+    -unity-text-align: middle-center;
+}
+
+.pause-btn {
+    font-size: 70px;
+    color: rgb(255, 255, 255);
+    background-color: rgba(0,0,0,0);
+    border-width: 0;
+    padding: 0;
+    margin-bottom: 40px;
+    -unity-text-align: middle-center;
+}
+
+/* 호버 색상 */
+.pause-btn.resume:hover   { color: rgb(60, 180, 60); }
+.pause-btn.settings:hover { color: rgb(220, 180, 0); }
+.pause-btn.tomenu:hover   { color: rgb(210, 50, 50); }
+
+/* ── 오버레이 공통 ── */
+.overlay {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(50, 50, 50, 0.93);
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+.overlay.visible { display: flex; }
+
+/* ── 설정 패널 ── */
+.settings-panel {
+    position: relative;
+    width: 1400px;
+    background-color: rgb(65, 65, 65);
+    border-radius: 0;
+    padding: 50px 100px 60px 100px;
+    align-items: center;
+}
+
+/* X 닫기 버튼 */
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 64px;
+    color: rgb(255, 255, 255);
+    background-color: rgba(0,0,0,0);
+    border-width: 0;
+    padding: 0;
+    width: 80px;
+    height: 80px;
+    -unity-text-align: middle-center;
+}
+.close-btn:hover { color: rgb(210, 50, 50); }
+
+/* 설정 타이틀 */
+.settings-title {
+    font-size: 76px;
+    color: rgb(255, 255, 255);
+    margin-bottom: 20px;
+    -unity-text-align: middle-center;
+}
+
+/* 섹션 타이틀 */
+.section-title {
+    font-size: 56px;
+    color: rgb(255, 255, 255);
+    margin-top: 20px;
+    margin-bottom: 20px;
+    -unity-text-align: middle-center;
+    width: 100%;
+}
+
+/* 슬라이더 행 */
+.slider-row {
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 18px;
+    width: 100%;
+}
+
+.slider-label {
+    font-size: 40px;
+    color: rgb(255, 255, 255);
+    width: 160px;
+    -unity-text-align: middle-right;
+    margin-right: 20px;
+}
+
+.slider-field {
+    flex-grow: 1;
+    height: 40px;
+    justify-content: center;
+}
+
+.slider-field > .unity-base-slider__input {
+    flex-grow: 1;
+}
+
+/* 비어있는 부분 */
+.slider-field > .unity-base-slider__tracker {
+    background-color: rgb(110, 110, 110);
+    height: 5px;
+    border-radius: 2px;
+}
+
+/* 채워진 부분 */
+.slider-field > .unity-base-slider__progress {
+    background-color: rgb(220, 220, 220);
+    height: 5px;
+    border-radius: 2px;
+}
+
+/* 드래거 */
+.slider-field > .unity-base-slider__dragger {
+    width: 26px;
+    height: 26px;
+    border-radius: 13px;
+    background-color: rgb(255, 255, 255);
+    border-width: 0;
+    margin-top: -11px;
+}
+
+/* 슬라이더 값 표시 */
+.slider-value {
+    font-size: 36px;
+    color: rgb(255, 255, 255);
+    width: 100px;
+    -unity-text-align: middle-right;
+    margin-left: 20px;
+}
+
+/* 드롭다운 행 */
+.dropdown-row {
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 18px;
+    width: 100%;
+}
+
+.dropdown-label {
+    font-size: 40px;
+    color: rgb(255, 255, 255);
+    width: 160px;
+    -unity-text-align: middle-right;
+    margin-right: 20px;
+}
+
+.dropdown-field {
+    flex-grow: 1;
+    background-color: rgb(245, 245, 245);
+    border-radius: 4px;
+    border-width: 0;
+    font-size: 34px;
+    color: rgb(0, 0, 0);
+    height: 56px;
+    -unity-text-align: middle-center;
+}
+
+/* ── 확인 패널 ── */
+.confirm-panel {
+    align-items: center;
+    justify-content: center;
+}
+
+.confirm-text {
+    font-size: 64px;
+    color: rgb(255, 255, 255);
+    margin-bottom: 60px;
+    -unity-text-align: middle-center;
+}
+
+.confirm-row {
+    flex-direction: row;
+    width: 600px;
+    justify-content: space-between;
+}
+
+.confirm-btn {
+    font-size: 64px;
+    color: rgb(255, 255, 255);
+    background-color: rgba(0,0,0,0);
+    border-width: 0;
+    padding: 0;
+}
+
+/* 메뉴 나가기 확인: 네=빨강, 아니요=초록 */
+.confirm-btn.yes:hover { color: rgb(210, 50, 50); }
+.confirm-btn.no:hover  { color: rgb(60, 180, 60); }

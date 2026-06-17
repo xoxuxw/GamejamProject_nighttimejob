@@ -1,0 +1,48 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI/Lobby/LobbyUI.uss?fileID=7433441132597879392&amp;guid=6910c2e4ea4264f37b98ed28f461b604&amp;type=3#LobbyUI"/>
+    <ui:VisualElement name="root" class="root" style="flex-grow: 1;">
+        <ui:Label name="title" text="야간 알바" class="title"/>
+        <ui:VisualElement name="menu-container" class="menu-container">
+            <ui:Button name="btn-start" text="시작" class="menu-btn start"/>
+            <ui:Button name="btn-settings" text="설정" class="menu-btn settings"/>
+            <ui:Button name="btn-quit" text="나가기" class="menu-btn quit"/>
+        </ui:VisualElement>
+        <ui:VisualElement name="overlay-settings" class="overlay">
+            <ui:VisualElement class="settings-panel">
+                <ui:Label text="설정" class="settings-title"/>
+                <ui:Label text="소리" class="section-title"/>
+                <ui:VisualElement class="slider-row">
+                    <ui:Label text="Master" class="slider-label"/>
+                    <ui:Slider name="slider-master" low-value="0" high-value="1" value="1" class="slider-field"/>
+                </ui:VisualElement>
+                <ui:VisualElement class="slider-row">
+                    <ui:Label text="BGM" class="slider-label"/>
+                    <ui:Slider name="slider-bgm" low-value="0" high-value="1" value="1" class="slider-field"/>
+                </ui:VisualElement>
+                <ui:VisualElement class="slider-row">
+                    <ui:Label text="SFX" class="slider-label"/>
+                    <ui:Slider name="slider-sfx" low-value="0" high-value="1" value="1" class="slider-field"/>
+                </ui:VisualElement>
+                <ui:Label text="화면" class="section-title"/>
+                <ui:VisualElement class="dropdown-row">
+                    <ui:Label text="FPS" class="dropdown-label"/>
+                    <ui:DropdownField name="dropdown-fps" index="1" class="dropdown-field"/>
+                </ui:VisualElement>
+                <ui:VisualElement class="dropdown-row">
+                    <ui:Label text="Shadow" class="dropdown-label"/>
+                    <ui:DropdownField name="dropdown-shadow" index="2" class="dropdown-field"/>
+                </ui:VisualElement>
+                <ui:Button name="btn-close-settings" text="X" class="close-btn"/>
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement name="overlay-quit" class="overlay">
+            <ui:VisualElement class="confirm-panel">
+                <ui:Label text="정말로 나가시겠습니까?" class="confirm-text"/>
+                <ui:VisualElement class="confirm-row">
+                    <ui:Button name="btn-confirm-yes" text="네" class="confirm-btn yes"/>
+                    <ui:Button name="btn-confirm-no" text="아니요" class="confirm-btn no"/>
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
